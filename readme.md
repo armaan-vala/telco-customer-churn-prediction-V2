@@ -1,70 +1,64 @@
-# Telco Customer Churn Prediction 📉🤖
+Telco Customer Churn Prediction –  V2 
 
-An end-to-end Machine Learning pipeline built to predict customer churn in the telecommunications industry. This project focuses on rigorous data preprocessing, handling class imbalance, and comparing linear vs. ensemble supervised models using industry-standard engineering practices.
+This repository contains the V2 version of the Telco Customer Churn Prediction project. Moving beyond basic machine learning.
 
----
+this version implements production-grade ML practices.
 
-## 🚀 Project Overview
+What's New in V2? 
+1. SMOTE
 
-Instead of jumping straight into complex algorithms, this project follows a disciplined machine learning lifecycle:
+Implemented SMOTE (Synthetic Minority Over-sampling Technique) to address class imbalance in the dataset. Balanced the minority class (churners) to improve model learning.
+Increased the training dataset from 5,625 rows to 8,260 rows after oversampling.
 
-1. **Data Auditing & Cleaning** (Handling hidden blank spaces and data types)
-2. **Preprocessing & Feature Engineering** (One-hot encoding and scaling)
-3. **Baseline Benchmarking** (Proving why naive accuracy fails under class imbalance)
-4. **Supervised Modeling & Evaluation** (Logistic Regression vs. Random Forest, analyzed via Confusion Matrix, Precision, Recall, F1-Score, and ROC-AUC curves)
+2. Boosters Benchmarking
+Trained and benchmarked powerful gradient boosting algorithms:
 
----
+XGBoost
+LightGBM
+CatBoost
 
-## 🛠️ What We Did (Step-by-Step Workflow)
+Compared their performance using multiple evaluation metrics to identify the most effective model.
 
-* **Data Cleaning & Preprocessing:** Audited the dataset, coerced hidden blank spaces in `TotalCharges` to `NaN`, dropped missing rows cleanly, and encoded the target variable (`Churn`) into binary format.
-* **One-Hot Encoding (`drop_first=True`):** Converted categorical text columns into binary indicator features while successfully avoiding the dummy variable trap (multicollinearity).
-* **Stratified Train-Test Split:** Divided the data into an 80% training set and 20% testing set while preserving the exact 73%-26% class distribution ratio.
-* **Feature Scaling (`StandardScaler`):** Standardized numerical columns (`tenure`, `MonthlyCharges`, `TotalCharges`) to prevent feature magnitude dominance in Logistic Regression, ensuring zero data leakage by fitting strictly on the training set.
-* **Baseline Benchmark Model:** Established a performance floor using a majority-class `DummyClassifier`, highlighting why high accuracy can be dangerously misleading when class imbalance is present.
-* **Supervised Learning Models:**
-  * **Logistic Regression:** Trained a linear decision boundary using the **Sigmoid function** to output probabilities and classified using a standard **0.5 threshold**.
-  * **Random Forest Classifier:** Trained an ensemble of **Decision Trees** using **Majority Voting** to capture non-linear feature interactions without requiring scaling.
-* **Comprehensive Evaluation Metrics:** Evaluated models beyond basic accuracy by analyzing **Confusion Matrices**, **Precision**, **Recall**, **F1-Score**, and plotting **ROC-AUC Curves**.
+3. Hyperparameter Optimization
 
----
+Implemented RandomizedSearchCV and GridSearchCV with 5-fold cross-validation (cv=5).
 
-## 📊 Key Results & Findings
+Extracted optimal hyperparameters for the model:
 
-* **Logistic Regression (AUC = 0.836)** outperformed **Random Forest (AUC = 0.816)** on this dataset, proving that linear relationships dominated the feature space and complex ensembles were prone to minor overfitting.
-* Addressed the **Class Imbalance Problem** by prioritizing **Recall and F1-Score** over naive accuracy, ensuring the model successfully catches actual churners rather than just guessing the majority class.
+4. Model Explainability
 
----
+Integrated SHAP (SHapley Additive exPlanations) to interpret model predictions.
 
-## 📂 Project Structure
+Generated: Global Feature Importance Bar Plots & SHAP Beeswarm Plots
 
-```text
-├── churn-dataset/
-│   └── WA_Fn-UseC_-Telco-Customer-Churn.csv
-├── churn_analysis.ipynb          # containing step-by-step code    
-├── requirements.txt              # Project dependencies
-└── README.md                     # Project documentation
+Made the model's decision-making process more transparent and interpretable.
 
-```
+5. Issue Faced : Version Conflict,here's how i resolved it 
 
-## ⚙️ How to Run Locally
+Resolved compatibility issues between modern XGBoost and SHAP.
 
-Follow these steps to set up and run the project on your machine.
+Fixed the [5E-1] string parsing bug.
 
-### 1. Clone the Repository
+Established a stable machine learning pipeline using XGBoost 2.1.4.
 
-```bash
-git clone https://github.com/armaan-vala/telco-customer-churn-prediction.git
-```
+## 📊 Key Findings & Results
 
-### 2. generate isolated enviroment 
+### Top Churn Drivers (SHAP Analysis)
 
-### 3. Install Dependencies
+The SHAP analysis highlighted the following major factors influencing customer churn:
 
-Install the required Python libraries:
+* **Tenure:** Customers with longer subscription periods are generally more likely to stay with the company.
+* **InternetService_Fiber optic:** Fiber optic customers demonstrated a comparatively higher tendency to churn.
+* **MonthlyCharges:** Higher monthly bills significantly influence customer churn, suggesting that pricing and affordability play an important role in customer retention.
 
-```bash
-pip install -r requirements.txt
-```
+### Final Model Performance Metrics (Tuned XGBoost)
 
-### 4. Launch Jupyter Notebook
+To provide a clear benchmark for production deployment, the final optimized model was evaluated on the untouched test set ($N = 1,407$ rows):
+
+* **Test ROC-AUC:** `0.8081`
+* **Test Accuracy:** `75.48%` (`0.7548`)
+* **Precision (Churn Class):** `0.5320`
+* **Recall (Churn Class):** `0.6444`
+* **F1-Score (Churn Class):** `0.5828`
+
+
